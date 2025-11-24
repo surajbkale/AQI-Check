@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
+import airQualityRouter from "./routes/airQuality.route.js";
 
 const app = express();
 // app.use(
@@ -19,23 +19,23 @@ app.get("/", (req, res) => {
   res.send("AQICheck Backend is running!");
 });
 
-app.get("/api/aqi/:city", async (req, res) => {
-  try {
-    const city = req.params.city;
-    const url = `https://api.waqi.info/feed/${city}/?token=${process.env.AQICN_TOKEN}`;
+app.use("/api/air-quality", airQualityRouter);
 
-    console.log("URL:", url);
+// app.get("/api/aqi/:city", async (req, res) => {
+//   try {
+//     const city = req.params.city;
+//     const url = `https://api.waqi.info/feed/${city}/?token=${process.env.AQICN_TOKEN}`;
 
-    const response = await axios.get(url);
-    return res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "AQI API request failed" });
-  }
+//     console.log("URL:", url);
+
+//     const response = await axios.get(url);
+//     return res.json(response.data);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "AQI API request failed" });
+//   }
+// });
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
-// http://api.waqi.info/feed/pune/?token=d68fb8477575cd93ad4b9ca96f8f3c130b40050e
