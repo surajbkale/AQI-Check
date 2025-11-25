@@ -2,7 +2,6 @@ import { useAqi } from "./hooks/useAqi";
 import Search from "./components/Search";
 import CityCard from "./components/CityCard";
 import PollutantCard from "./components/PollutantsCard";
-import { Separator } from "./components/ui/separator";
 
 export default function App() {
   const { data, loading, error, search } = useAqi();

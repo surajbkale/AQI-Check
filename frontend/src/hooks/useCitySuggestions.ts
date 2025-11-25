@@ -1,40 +1,35 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-// Define the shape of the suggestion result
 export interface CitySearchResult {
   uid: number;
   name: string;
-  url: string; // The specific station URL (useful for unique identification)
+  url: string;
 }
 
-const API_TOKEN = import.meta.env.VITE_AQI_TOKEN; // Ensure this is in your .env
+const API_TOKEN = import.meta.env.VITE_AQI_TOKEN;
 
 export function useCitySuggestions(query: string) {
   const [results, setResults] = useState<CitySearchResult[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // 1. Don't search if query is too short
     if (query.length < 3) {
       setResults([]);
       return;
     }
 
-    // 2. Debounce: Wait 500ms before making the API call
     const timer = setTimeout(async () => {
       try {
         setLoading(true);
-        // Using the WAQI Search Endpoint
         const response = await axios.get(
           `https://api.waqi.info/search/?keyword=${query}&token=${API_TOKEN}`
         );
 
         if (response.data.status === "ok") {
-          // Map the raw data to a cleaner format
           const formattedResults = response.data.data.map((item: any) => ({
             uid: item.uid,
-            name: item.station.name, // "Beijing" or "US Embassy, Beijing"
+            name: item.station.name,
             url: item.station.url,
           }));
           setResults(formattedResults);
@@ -49,7 +44,7 @@ export function useCitySuggestions(query: string) {
       }
     }, 500);
 
-    return () => clearTimeout(timer); // Cleanup timer on key press
+    return () => clearTimeout(timer);
   }, [query]);
 
   return { results, loading };

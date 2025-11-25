@@ -1,5 +1,15 @@
 import { AQI_CATEGORY_DATA } from "@/constants/aqiCategories";
-import { getAQICategoryKey } from "@/utils/aqiKey";
+import { motion } from "framer-motion";
+import { AnimatedNumber } from "./ui/AnimatedNumber";
+
+function getAQICategoryKey(aqi: number) {
+  if (aqi <= 50) return "Very Good";
+  if (aqi <= 100) return "Good";
+  if (aqi <= 150) return "Fair";
+  if (aqi <= 200) return "Poor";
+  if (aqi <= 300) return "Very Poor";
+  return "Very Hazardous";
+}
 
 export default function CityCard({ data }: { data: any }) {
   const categoryKey = getAQICategoryKey(data.aqi);
@@ -20,9 +30,13 @@ export default function CityCard({ data }: { data: any }) {
 
   const progressPercent = Math.min((data.aqi / 500) * 100, 100);
 
-  console.log(uiData.advice);
   return (
-    <div className="mt-10 w-full max-w-7xl mx-auto relative overflow-hidden rounded-3xl shadow-2xl">
+    <motion.div
+      initial={{ opacity: 0, y: 50, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="mt-10 w-full max-w-7xl mx-auto relative overflow-hidden rounded-3xl shadow-2xl"
+    >
       {uiData?.image && (
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 transition-all duration-500"
@@ -38,11 +52,11 @@ export default function CityCard({ data }: { data: any }) {
       />
 
       <div className="relative z-20 p-8 text-white">
-        <div className="flex justify-between mt-4">
-          <p className="text-lg text-slate-200 mb-8 font-semibold">
-            {data.city.name}
+        <div className="flex justify-between items-start mb-8">
+          <p className="text-lg text-slate-200 font-medium">
+            {data.city.name}, {data.city.country}
           </p>
-          <p className="text-sm text-slate-200 mb-8 font-medium">
+          <p className="text-sm text-slate-200 font-medium">
             Last Updated: {new Date(data.time.iso).toLocaleString()}
           </p>
         </div>
@@ -52,10 +66,12 @@ export default function CityCard({ data }: { data: any }) {
             <div className="flex flex-wrap items-end gap-6 mb-6">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span
+                  <motion.span
+                    animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
                     className="block w-3 h-3 rounded-full"
                     style={{ backgroundColor: color }}
-                  ></span>
+                  />
                   <p className="text-lg font-medium text-slate-100">Live AQI</p>
                 </div>
                 <div className="flex items-baseline gap-3">
@@ -66,7 +82,7 @@ export default function CityCard({ data }: { data: any }) {
                       textShadow: "0 2px 10px rgba(0,0,0,0.2)",
                     }}
                   >
-                    {data.aqi}
+                    <AnimatedNumber value={data.aqi} />
                   </h1>
                   <span className="text-slate-300 font-medium">(AQI-US)</span>
                 </div>
@@ -76,7 +92,10 @@ export default function CityCard({ data }: { data: any }) {
                 <p className="text-slate-200 text-sm mb-2 font-medium">
                   Air Quality is
                 </p>
-                <div
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
                   className="px-8 py-3 rounded-xl text-2xl font-bold shadow-lg backdrop-blur-sm"
                   style={{
                     backgroundColor: `${color}66`,
@@ -84,7 +103,7 @@ export default function CityCard({ data }: { data: any }) {
                   }}
                 >
                   {categoryLabel}
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -122,39 +141,23 @@ export default function CityCard({ data }: { data: any }) {
               </div>
 
               <div className="relative h-3 rounded-full bg-slate-900/50 shadow-inner overflow-visible">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#009966] via-[#ffde33] via-[#ff9933] via-[#cc0033] via-[#660099] to-[#7e0023] opacity-10" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#009966] via-[#ffde33] via-[#ff9933] via-[#cc0033] via-[#660099] to-[#7e0023] opacity-80" />
 
-                <div
-                  className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-white shadow-lg transition-all duration-1000 ease-out"
-                  style={{
-                    left: `calc(${progressPercent}% - 10px)`, 
-                    backgroundColor: color,
-                  }}
+                <motion.div
+                  initial={{ left: "0%" }}
+                  animate={{ left: `calc(${progressPercent}% - 10px)` }}
+                  transition={{ duration: 1.5, ease: "circOut" }}
+                  className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-white shadow-lg"
+                  style={{ backgroundColor: color }}
                 />
-              </div>
-              <div className="flex justify-between text-xs text-slate-400 mt-2 font-medium relative">
-                <span className="absolute left-[0%] -translate-x-1/2">0</span>
-                <span className="absolute left-[10%] -translate-x-1/2">50</span>
-                <span className="absolute left-[20%] -translate-x-1/2">
-                  100
-                </span>
-                <span className="absolute left-[30%] -translate-x-1/2">
-                  150
-                </span>
-                <span className="absolute left-[40%] -translate-x-1/2">
-                  200
-                </span>
-                <span className="absolute left-[60%] -translate-x-1/2">
-                  300
-                </span>
-                <span className="absolute left-[76%] -translate-x-1/2">
-                  301+
-                </span>
               </div>
             </div>
           </div>
 
-          <div
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.6 }}
             className="lg:w-[400px] w-full rounded-3xl p-6 backdrop-blur-md border border-white/10 shadow-2xl"
             style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
           >
@@ -168,28 +171,7 @@ export default function CityCard({ data }: { data: any }) {
                   <p className="text-lg text-slate-300">Temperature</p>
                 </div>
               </div>
-              <a
-                href={data.city.url}
-                target="_blank"
-                className="bg-white/20 hover:bg-white/30 transition p-2 rounded-full"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                  />
-                </svg>
-              </a>
             </div>
-
             <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 text-center">
               <div>
                 <p className="text-slate-300 text-sm mb-1 font-medium">
@@ -210,9 +192,9 @@ export default function CityCard({ data }: { data: any }) {
                 <p className="text-xl font-bold">{weather.pressure} hPa</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

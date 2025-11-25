@@ -10,17 +10,15 @@ export default function Search({
   onSearch,
   disabled,
 }: {
-  // onSearch now accepts the specific station name or UID
   onSearch: (city: string) => void;
   disabled: boolean;
 }) {
   const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false); // To toggle dropdown visibility
+  const [isOpen, setIsOpen] = useState(false);
   const { results, loading } = useCitySuggestions(query);
   const [disabledBtn, _setDisabledBtn] = useState(disabled);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown if clicked outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -37,7 +35,6 @@ export default function Search({
   const handleSelect = (city: CitySearchResult) => {
     setQuery(city.name);
     setIsOpen(false);
-    // Passing the name is usually enough, but you could pass city.uid if your API supports it
     onSearch(city.name);
   };
 
@@ -71,7 +68,6 @@ export default function Search({
         </Button>
       </form>
 
-      {/* Suggestions Dropdown */}
       {isOpen && results.length > 0 && (
         <ul className="absolute left-0 right-0 bg-slate-800/95 backdrop-blur-md border border-slate-700 rounded-xl mt-2 max-h-80 overflow-y-auto shadow-2xl animate-in fade-in slide-in-from-top-2">
           {results.map((city) => (
@@ -91,7 +87,6 @@ export default function Search({
         </ul>
       )}
 
-      {/* No results state */}
       {isOpen && query.length > 2 && results.length === 0 && !loading && (
         <div className="absolute left-0 right-0 bg-slate-800 border border-slate-700 rounded-xl mt-2 p-4 text-slate-400 text-sm">
           No cities found with that name.
