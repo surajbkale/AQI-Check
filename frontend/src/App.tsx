@@ -22,10 +22,14 @@ export default function App() {
       <div className="w-full max-w-7xl text-center">
         <h1 className="text-3xl font-bold mb-6">AQI Check</h1>
 
-        <Search onSearch={search} />
+        <Search onSearch={search} disabled={loading} />
 
-        {loading && <p className="text-center mt-4">Loading...</p>}
-        {error && <p className="text-red-400 text-center mt-4">{error}</p>}
+        {/* {loading && <p className="text-center mt-4">Loading...</p>} */}
+        {error && (
+          <p className="text-red-400 text-center mt-4">
+            {"Couldn't Found the Data..."}
+          </p>
+        )}
         {data && (
           <>
             <div className="mt-6 flex justify-center">
