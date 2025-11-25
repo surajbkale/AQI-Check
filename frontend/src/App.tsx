@@ -17,7 +17,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-3xl text-center">
+      <div className="w-full max-w-7xl text-center">
         <h1 className="text-3xl font-bold mb-6">Air Quality Index Explorer</h1>
 
         <Search onSearch={search} />

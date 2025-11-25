@@ -6,33 +6,33 @@ export function classifyAQI(aqi: number) {
     };
   }
 
-  if (aqi <= 50) {
+  if (aqi <= 33) {
+    return {
+      label: "Very Good",
+      color: "#2795F5",
+    };
+  }
+  if (aqi <= 66) {
     return {
       label: "Good",
       color: "#009966",
     };
   }
-  if (aqi <= 100) {
+  if (aqi <= 99) {
     return {
-      label: "Moderate",
+      label: "Fair",
       color: "#ffde33",
     };
   }
-  if (aqi <= 150) {
+  if (aqi <= 149) {
     return {
-      label: "Unhealthy for Sensitive Groups",
+      label: "Poor",
       color: "#ff9933",
     };
   }
   if (aqi <= 200) {
     return {
-      label: "Unhealthy",
-      color: "#cc0033",
-    };
-  }
-  if (aqi <= 300) {
-    return {
-      label: "Very Unhealthy",
+      label: "Very Poor",
       color: "#660099",
     };
   }
