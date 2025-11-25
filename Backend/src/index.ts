@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 import airQualityRouter from "./routes/airQuality.route.js";
+import citySearchRouter from "./routes/citySearch.route.js";
 
 const app = express();
 // app.use(
@@ -20,6 +21,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/air-quality", airQualityRouter);
+
+app.use("/api/cities", citySearchRouter);
 
 // app.get("/api/aqi/:city", async (req, res) => {
 //   try {
