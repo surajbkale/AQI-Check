@@ -4,17 +4,30 @@ import dotenv from "dotenv";
 dotenv.config();
 import airQualityRouter from "./routes/airQuality.route.js";
 import citySearchRouter from "./routes/citySearch.route.js";
+import rateLimit from "express-rate-limit";
 
 const app = express();
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//   })
-// );
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 app.use(express.json());
-
+app.set("trust proxy", 1);
 const PORT = process.env.PORT;
+
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 mins window,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    error: "Too many requests, please try again later",
+  },
+});
+
+app.use(limiter);
 
 app.get("/", (req, res) => {
   res.send("AQICheck Backend is running!");
@@ -23,21 +36,6 @@ app.get("/", (req, res) => {
 app.use("/api/air-quality", airQualityRouter);
 
 app.use("/api/cities", citySearchRouter);
-
-// app.get("/api/aqi/:city", async (req, res) => {
-//   try {
-//     const city = req.params.city;
-//     const url = `https://api.waqi.info/feed/${city}/?token=${process.env.AQICN_TOKEN}`;
-
-//     console.log("URL:", url);
-
-//     const response = await axios.get(url);
-//     return res.json(response.data);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "AQI API request failed" });
-//   }
-// });
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
