@@ -21,7 +21,7 @@ export function classifyAQI(aqi: number) {
   if (aqi <= 99) {
     return {
       label: "Fair",
-      color: "#ffde33",
+      color: "#829100",
     };
   }
   if (aqi <= 149) {

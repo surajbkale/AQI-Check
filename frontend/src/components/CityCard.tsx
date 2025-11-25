@@ -1,171 +1,216 @@
 import { AQI_CATEGORY_DATA } from "@/constants/aqiCategories";
-
-function getAQICategoryKey(aqi: number) {
-  if (aqi <= 50) return "Very Good";
-  if (aqi <= 100) return "Good";
-  if (aqi <= 150) return "Fair";
-  if (aqi <= 200) return "Poor";
-  if (aqi <= 300) return "Very Poor";
-  return "Very Hazardous";
-}
+import { getAQICategoryKey } from "@/utils/aqiKey";
 
 export default function CityCard({ data }: { data: any }) {
   const categoryKey = getAQICategoryKey(data.aqi);
-
   const uiData = AQI_CATEGORY_DATA[categoryKey];
   const categoryLabel = data.category.label;
   const color = data.category.color;
 
   const weather = {
-    temperature: data.pollutants?.t?.v ?? null,
-    humidity: data.pollutants?.h?.v ?? null,
-    wind: data.pollutants?.w?.v ?? null,
-    pressure: data.pollutants?.p?.v ?? null,
-    dew: data.pollutants?.dew?.v ?? null,
+    temperature: data.pollutants?.t?.v
+      ? Math.round(data.pollutants.t.v)
+      : "N/A",
+    humidity: data.pollutants?.h?.v ? Math.round(data.pollutants.h.v) : "N/A",
+    wind: data.pollutants?.w?.v ? Math.round(data.pollutants.w.v) : "N/A",
+    pressure: data.pollutants?.p?.v ? Math.round(data.pollutants.p.v) : "N/A",
+    pm10: data.pollutants?.pm10?.v ? data.pollutants.pm10.v.toFixed(0) : "N/A",
+    pm25: data.pollutants?.pm25?.v ? data.pollutants.pm25.v.toFixed(0) : "N/A",
   };
 
+  const progressPercent = Math.min((data.aqi / 500) * 100, 100);
+
+  console.log(uiData.advice);
   return (
-    <div className="mt-10 w-full max-w-7xl mx-auto rounded-2xl bg-slate-800/60 backdrop-blur-lg border border-slate-700 shadow-xl overflow-hidden">
-      {/* Top Header */}
-      <div className="p-6 border-b border-slate-700 bg-slate-800/80 flex justify-between items-start">
-        <div>
-          <h2 className="text-2xl font-bold text-white">
-            Real-time Air Quality Index (AQI)
-          </h2>
-          <a
-            href={data.city.url}
-            target="_blank"
-            className="text-indigo-400 underline text-sm mt-1 block hover:text-indigo-300 transition-colors"
-          >
+    <div className="mt-10 w-full max-w-7xl mx-auto relative overflow-hidden rounded-3xl shadow-2xl">
+      {uiData?.image && (
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 transition-all duration-500"
+          style={{ backgroundImage: `url(${uiData.image})` }}
+        />
+      )}
+
+      <div
+        className="absolute inset-0 z-10"
+        style={{
+          background: `linear-gradient(to right, ${color}DD, ${color}AA, #1e293bCC)`,
+        }}
+      />
+
+      <div className="relative z-20 p-8 text-white">
+        <div className="flex justify-between mt-4">
+          <p className="text-lg text-slate-200 mb-8 font-semibold">
             {data.city.name}
-          </a>
-        </div>
-        <p className="text-xs text-slate-400 mt-1 text-right">
-          Last Updated:
-          <br /> {new Date(data.time.iso).toLocaleTimeString()}
-        </p>
-      </div>
-
-      {/* Main Content Section */}
-      <div className="p-6 flex flex-col lg:flex-row items-center justify-between gap-8">
-        {/* Image & AQI Score */}
-        <div className="flex flex-col sm:flex-row items-center gap-8 flex-1 justify-center lg:justify-start">
-          {/* The AQI Image */}
-          {uiData?.image && (
-            <div className="relative group">
-              <div
-                className="absolute -inset-1 rounded-full opacity-25 blur-xl transition duration-1000 group-hover:opacity-50"
-                style={{ backgroundColor: color }}
-              ></div>
-              <img
-                src={uiData.image}
-                alt={categoryLabel}
-                className="relative w-32 h-32 sm:w-40 sm:h-40 object-contain drop-shadow-2xl"
-              />
-            </div>
-          )}
-
-          {/* The Score */}
-          <div className="text-center sm:text-left">
-            <p className="text-sm text-slate-400 font-semibold uppercase tracking-wider">
-              Live AQI
-            </p>
-            <div className="flex items-baseline justify-center sm:justify-start gap-2">
-              <span className="text-7xl font-extrabold tracking-tighter text-white">
-                {data.aqi}
-              </span>
-            </div>
-            <div
-              className="inline-block px-3 py-1 rounded-full text-sm font-bold mt-2"
-              style={{ backgroundColor: color + "20", color: color }}
-            >
-              {categoryLabel} ({categoryKey})
-            </div>
-
-            {/* Advice */}
-            {uiData?.advice && (
-              <p className="text-slate-300 text-sm mt-3 max-w-xs">
-                {uiData.advice}
-              </p>
-            )}
-          </div>
+          </p>
+          <p className="text-sm text-slate-200 mb-8 font-medium">
+            Last Updated: {new Date(data.time.iso).toLocaleString()}
+          </p>
         </div>
 
-        {/* Weather Widget */}
-        <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 shadow-inner w-full lg:w-auto min-w-[280px]">
-          <div className="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
-            <span className="text-slate-400 text-sm font-medium">
-              Temperature
-            </span>
-            <span className="text-3xl font-bold text-white">
-              {weather.temperature}°
-            </span>
+        <div className="flex flex-col lg:flex-row gap-10 items-start">
+          <div className="flex-1 w-full">
+            <div className="flex flex-wrap items-end gap-6 mb-6">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span
+                    className="block w-3 h-3 rounded-full"
+                    style={{ backgroundColor: color }}
+                  ></span>
+                  <p className="text-lg font-medium text-slate-100">Live AQI</p>
+                </div>
+                <div className="flex items-baseline gap-3">
+                  <h1
+                    className="text-8xl font-extrabold tracking-tighter"
+                    style={{
+                      color: "#fff",
+                      textShadow: "0 2px 10px rgba(0,0,0,0.2)",
+                    }}
+                  >
+                    {data.aqi}
+                  </h1>
+                  <span className="text-slate-300 font-medium">(AQI-US)</span>
+                </div>
+              </div>
+
+              <div className="pb-4">
+                <p className="text-slate-200 text-sm mb-2 font-medium">
+                  Air Quality is
+                </p>
+                <div
+                  className="px-8 py-3 rounded-xl text-2xl font-bold shadow-lg backdrop-blur-sm"
+                  style={{
+                    backgroundColor: `${color}66`,
+                    border: `1px solid ${color}88`,
+                  }}
+                >
+                  {categoryLabel}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-8 mb-8 text-lg">
+              <div>
+                <span className="text-slate-300 font-medium">PM10 : </span>
+                <span className="font-bold">{weather.pm10} µg/m³</span>
+              </div>
+              <div>
+                <span className="text-slate-300 font-medium">PM2.5 : </span>
+                <span className="font-bold">{weather.pm25} µg/m³</span>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <div className="flex justify-between text-xs font-medium text-slate-300 mb-2 px-1">
+                <span style={{ width: "10%" }} className="text-center">
+                  Good
+                </span>
+                <span style={{ width: "10%" }} className="text-center">
+                  Moderate
+                </span>
+                <span style={{ width: "10%" }} className="text-center">
+                  Poor
+                </span>
+                <span style={{ width: "14%" }} className="text-center">
+                  Unhealthy
+                </span>
+                <span style={{ width: "10%" }} className="text-center">
+                  Severe
+                </span>
+                <span style={{ width: "16%" }} className="text-center">
+                  Hazardous
+                </span>
+              </div>
+
+              <div className="relative h-3 rounded-full bg-slate-900/50 shadow-inner overflow-visible">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#009966] via-[#ffde33] via-[#ff9933] via-[#cc0033] via-[#660099] to-[#7e0023] opacity-10" />
+
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-white shadow-lg transition-all duration-1000 ease-out"
+                  style={{
+                    left: `calc(${progressPercent}% - 10px)`, 
+                    backgroundColor: color,
+                  }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-slate-400 mt-2 font-medium relative">
+                <span className="absolute left-[0%] -translate-x-1/2">0</span>
+                <span className="absolute left-[10%] -translate-x-1/2">50</span>
+                <span className="absolute left-[20%] -translate-x-1/2">
+                  100
+                </span>
+                <span className="absolute left-[30%] -translate-x-1/2">
+                  150
+                </span>
+                <span className="absolute left-[40%] -translate-x-1/2">
+                  200
+                </span>
+                <span className="absolute left-[60%] -translate-x-1/2">
+                  300
+                </span>
+                <span className="absolute left-[76%] -translate-x-1/2">
+                  301+
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Humidity</span>
-              <span className="text-white font-medium">
-                {weather.humidity}%
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Wind</span>
-              <span className="text-white font-medium">
-                {Math.round(weather.wind)} km/h
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Pressure</span>
-              <span className="text-white font-medium">
-                {weather.pressure} hPa
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Pollutant Scale Bar */}
-      <div className="px-6 pt-2 pb-6">
-        <div className="relative h-4 rounded-full bg-slate-900 shadow-inner border border-slate-700/50 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-green-500 via-yellow-400 via-orange-500 via-red-600 via-purple-700 to-red-900 opacity-30" />
-
-          {/* Progress Bar */}
           <div
-            className="h-full transition-all duration-1000 ease-out"
-            style={{
-              width: `${Math.min((data.aqi / 500) * 100, 100)}%`,
-              backgroundColor: color,
-            }}
-          />
-        </div>
-        <div className="flex justify-between text-xs text-slate-500 mt-2 font-medium px-1">
-          <span>Good (0)</span>
-          <span>Hazardous (500+)</span>
-        </div>
-      </div>
-
-      {/* Pollutants Grid */}
-      <div className="bg-slate-900/30 p-6 border-t border-slate-700">
-        <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-          <span className="w-1 h-5 bg-indigo-500 rounded-full block"></span>
-          Pollutant Details
-        </h3>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {Object.entries(data.pollutants).map(([key, val]: any) => (
-            <div
-              key={key}
-              className="bg-slate-800 p-3 rounded-xl border border-slate-700/50 hover:border-indigo-500/50 transition-colors group"
-            >
-              <p className="text-xs text-slate-400 uppercase font-bold tracking-wider group-hover:text-indigo-400 transition-colors">
-                {key}
-              </p>
-              <p className="text-xl font-bold text-white mt-1">
-                {val.v.toFixed(1)}
-              </p>
+            className="lg:w-[400px] w-full rounded-3xl p-6 backdrop-blur-md border border-white/10 shadow-2xl"
+            style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="text-5xl">☁️</div>
+                <div>
+                  <span className="text-5xl font-bold">
+                    {weather.temperature}°C
+                  </span>
+                  <p className="text-lg text-slate-300">Temperature</p>
+                </div>
+              </div>
+              <a
+                href={data.city.url}
+                target="_blank"
+                className="bg-white/20 hover:bg-white/30 transition p-2 rounded-full"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                  />
+                </svg>
+              </a>
             </div>
-          ))}
+
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 text-center">
+              <div>
+                <p className="text-slate-300 text-sm mb-1 font-medium">
+                  Humidity
+                </p>
+                <p className="text-xl font-bold">{weather.humidity}%</p>
+              </div>
+              <div className="border-l border-r border-white/10">
+                <p className="text-slate-300 text-sm mb-1 font-medium">
+                  Wind Speed
+                </p>
+                <p className="text-xl font-bold">{weather.wind} km/h</p>
+              </div>
+              <div>
+                <p className="text-slate-300 text-sm mb-1 font-medium">
+                  Pressure
+                </p>
+                <p className="text-xl font-bold">{weather.pressure} hPa</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
