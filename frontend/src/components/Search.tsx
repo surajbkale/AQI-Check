@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useCitySuggestions } from "../hooks/useCitySuggestions";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 export default function Search({
   onSearch,
@@ -13,21 +14,27 @@ export default function Search({
   return (
     <div className="relative">
       <form
-        className="flex gap-2"
+        className="flex w-full max-w-xl mx-auto items-center gap-3"
         onSubmit={(e) => {
           e.preventDefault();
           onSearch(query);
         }}
       >
-        <input
+        <Input
           type="text"
-          className="flex-1 px-4 py-2 rounded-lg bg-slate-800 border border-slate-700"
-          placeholder="Search city…"
+          placeholder="Search city..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          className="h-12 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 text-base placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-indigo-500"
         />
-        <button className="px-6 py-2 bg-indigo-600 rounded-lg">Search</button>
-        {/* <Button children={"Search"} /> */}
+
+        <Button
+          size="lg"
+          variant="default"
+          className="h-12 px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+        >
+          Search
+        </Button>
       </form>
 
       {/* suggestions */}
