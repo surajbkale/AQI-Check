@@ -3,9 +3,9 @@ export interface AirQualityResult {
     name: string;
     geo: number[] | null;
     url: string | null;
-    country?: string;
+    country: string | null;
   };
-  category?: {
+  category: {
     label: string;
     color: string;
   };

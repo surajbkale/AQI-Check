@@ -5,6 +5,10 @@ export function AnimatedNumber({ value }: { value: number }) {
   const spring = useSpring(0, { mass: 0.8, stiffness: 75, damping: 15 });
   const display = useTransform(spring, (current) => Math.round(current));
 
+  if (Number.isNaN(value)) {
+    return <motion.span>Unknown</motion.span>;
+  }
+
   useEffect(() => {
     spring.set(value);
   }, [spring, value]);

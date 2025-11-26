@@ -1,6 +1,7 @@
 import { AQI_CATEGORY_DATA } from "@/constants/aqiCategories";
 import { motion } from "framer-motion";
 import { AnimatedNumber } from "./ui/AnimatedNumber";
+import type { AirQualityResult } from "@/types/airQuality.type";
 
 function getAQICategoryKey(aqi: number) {
   if (aqi <= 50) return "Very Good";
@@ -11,7 +12,7 @@ function getAQICategoryKey(aqi: number) {
   return "Very Hazardous";
 }
 
-export default function CityCard({ data }: { data: any }) {
+export default function CityCard({ data }: { data: AirQualityResult }) {
   const categoryKey = getAQICategoryKey(data.aqi);
   const uiData = AQI_CATEGORY_DATA[categoryKey];
   const categoryLabel = data.category.label;
