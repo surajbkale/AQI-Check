@@ -5,7 +5,6 @@ export const POLLUTANT_MAP: Record<string, { label: string; name: string }> = {
   no2: { label: "NO₂", name: "Nitrogen Dioxide" },
   so2: { label: "SO₂", name: "Sulfur Dioxide" },
   co: { label: "CO", name: "Carbon Monoxide" },
-  // Fallbacks for less common ones
   t: { label: "Temp", name: "Temperature" },
   h: { label: "Hum", name: "Humidity" },
   w: { label: "Wind", name: "Wind Speed" },

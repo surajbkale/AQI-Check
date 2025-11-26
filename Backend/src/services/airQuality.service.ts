@@ -12,14 +12,17 @@ export class AirQualityService {
       return cached;
     }
 
-    const url = `https://api.waqi.info/feed/${encodeURIComponent(
-      city
-    )}/?token=${ENV.AQICN_TOKEN}`;
+    let apiParam = city;
+    if (!city.startsWith("geo:")) {
+      apiParam = encodeURIComponent(city);
+    }
+
+    const url = `https://api.waqi.info/feed/${apiParam}/?token=${ENV.AQICN_TOKEN}`;
 
     const response = await http.get(url);
 
     if (response.data.status !== "ok") {
-      throw new Error("Vendor returned non-ok response");
+      throw new Error(response.data.data || "Unknown error");
     }
 
     const d = response.data.data;
