@@ -35,7 +35,7 @@ export default function CityCard({ data }: { data: any }) {
       initial={{ opacity: 0, y: 50, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="mt-10 w-full max-w-7xl mx-auto relative overflow-hidden rounded-3xl shadow-2xl"
+      className="mt-10 w-full max-w-7xl mx-auto relative overflow-hidden rounded-3xl shadow-2xl bg-slate-800"
     >
       {uiData?.image && (
         <div
@@ -54,10 +54,10 @@ export default function CityCard({ data }: { data: any }) {
       <div className="relative z-20 p-8 text-white">
         <div className="flex justify-between items-start mb-8">
           <p className="text-lg text-slate-200 font-medium">
-            {data.city.name}, {data.city.country}
+            {data.city.name} {data.city.country ? `, ${data.city.country}` : ""}
           </p>
           <p className="text-sm text-slate-200 font-medium">
-            Last Updated: {new Date(data.time.iso).toLocaleString()}
+            Last Updated: {new Date(data.time.iso).toLocaleTimeString()}
           </p>
         </div>
 
@@ -121,21 +121,21 @@ export default function CityCard({ data }: { data: any }) {
             <div className="mb-4">
               <div className="flex justify-between text-xs font-medium text-slate-300 mb-2 px-1">
                 <span style={{ width: "10%" }} className="text-center">
+                  Very Good
+                </span>
+                <span style={{ width: "10%" }} className="text-center">
                   Good
                 </span>
                 <span style={{ width: "10%" }} className="text-center">
-                  Moderate
+                  Fair
                 </span>
                 <span style={{ width: "10%" }} className="text-center">
                   Poor
                 </span>
-                <span style={{ width: "14%" }} className="text-center">
-                  Unhealthy
+                <span style={{ width: "20%" }} className="text-center">
+                  Very Poor
                 </span>
-                <span style={{ width: "10%" }} className="text-center">
-                  Severe
-                </span>
-                <span style={{ width: "16%" }} className="text-center">
+                <span style={{ width: "40%" }} className="text-center">
                   Hazardous
                 </span>
               </div>
@@ -150,6 +150,26 @@ export default function CityCard({ data }: { data: any }) {
                   className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-white shadow-lg"
                   style={{ backgroundColor: color }}
                 />
+              </div>
+
+              <div className="flex justify-between text-xs text-slate-400 mt-2 font-medium relative opacity-50">
+                <span className="absolute left-[0%] -translate-x-1/2">0</span>
+                <span className="absolute left-[10%] -translate-x-1/2">50</span>
+                <span className="absolute left-[20%] -translate-x-1/2">
+                  100
+                </span>
+                <span className="absolute left-[30%] -translate-x-1/2">
+                  150
+                </span>
+                <span className="absolute left-[40%] -translate-x-1/2">
+                  200
+                </span>
+                <span className="absolute left-[60%] -translate-x-1/2">
+                  300
+                </span>
+                <span className="absolute left-[100%] -translate-x-1/2">
+                  500
+                </span>
               </div>
             </div>
           </div>
@@ -180,9 +200,7 @@ export default function CityCard({ data }: { data: any }) {
                 <p className="text-xl font-bold">{weather.humidity}%</p>
               </div>
               <div className="border-l border-r border-white/10">
-                <p className="text-slate-300 text-sm mb-1 font-medium">
-                  Wind Speed
-                </p>
+                <p className="text-slate-300 text-sm mb-1 font-medium">Wind</p>
                 <p className="text-xl font-bold">{weather.wind} km/h</p>
               </div>
               <div>
