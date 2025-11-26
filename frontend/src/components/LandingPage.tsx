@@ -11,7 +11,6 @@ import {
 export default function LandingContent() {
   return (
     <div className="mt-16 w-full max-w-5xl animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20">
-      {/* Educational Cards */}
       <div className="grid md:grid-cols-2 gap-8 mb-12">
         <div className="bg-slate-800/50 p-8 rounded-3xl border border-slate-700 backdrop-blur-sm shadow-xl">
           <div className="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 text-indigo-400">

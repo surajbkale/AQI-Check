@@ -1,12 +1,31 @@
-import { CITY_LIST } from "../store/cities.js";
+import axios from "axios";
+import { ENV } from "../config/env.js";
 
 class CitySearchService {
-  searchCities(query: string) {
-    const q = query.toLowerCase();
-    return CITY_LIST.filter((city) => city.toLowerCase().startsWith(q)).slice(
-      0,
-      10
-    );
+  async searchCiteis(query: string) {
+    if (!query) {
+      return [];
+    }
+
+    try {
+      const response = await axios.get(
+        `https://api.waqi.info/search/?keyword=${encodeURIComponent(
+          query
+        )}&token=${ENV.AQICN_TOKEN}`
+      );
+
+      if (response.data.status === "ok") {
+        return response.data.data.map((item: any) => ({
+          uid: item.uid,
+          name: item.station.name,
+          url: item.station.url,
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error("Error while searching suggestions...", error);
+      return [];
+    }
   }
 }
 

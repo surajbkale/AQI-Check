@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 
 export interface CitySearchResult {
   uid: number;
@@ -7,14 +7,12 @@ export interface CitySearchResult {
   url: string;
 }
 
-const API_TOKEN = import.meta.env.VITE_AQI_TOKEN;
-
 export function useCitySuggestions(query: string) {
   const [results, setResults] = useState<CitySearchResult[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (query.length < 3) {
+    if (query.length < 2) {
       setResults([]);
       return;
     }
@@ -22,27 +20,16 @@ export function useCitySuggestions(query: string) {
     const timer = setTimeout(async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `https://api.waqi.info/search/?keyword=${query}&token=${API_TOKEN}`
-        );
 
-        if (response.data.status === "ok") {
-          const formattedResults = response.data.data.map((item: any) => ({
-            uid: item.uid,
-            name: item.station.name,
-            url: item.station.url,
-          }));
-          setResults(formattedResults);
-        } else {
-          setResults([]);
-        }
+        const response = await api.get(`/cities?prefix=${query}`);
+        setResults(response.data || []);
       } catch (error) {
-        console.error("Search error:", error);
+        console.error("Search error: ", error);
         setResults([]);
       } finally {
         setLoading(false);
       }
-    }, 500);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [query]);
