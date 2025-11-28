@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./Backend
+    container_name: aqi-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    restart: always
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+  frontend:
+    build: ./frontend
+    container_name: aqi-frontend
+    ports:
+      - "80:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3000/api
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: always
